@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  backup_scheduler:
+    env_file:
+      - .env
+    build:
+      context: .
+    container_name: backup_scheduler
+    restart: always
+    volumes:
+      - ${ORIGIN_PATH}:/origin
+      - ${TARGET_PATH}:/target
+      - .env:/.env
