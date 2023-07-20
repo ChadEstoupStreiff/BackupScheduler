@@ -13,7 +13,7 @@ __TARGET_PATH = "/target"
 
 def log(msg: str, logger: Any=logging.info):
     time: str = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    logger(f"[{time}] >> {msg}")
+    logger(f"[{time}]  {msg}")
 
 def clean_folder(origin: str, target: str):
     for file in os.listdir(target):
@@ -38,8 +38,7 @@ def copy_folder(origin: str, target: str):
         elif os.path.isfile(origin_path):
             if not os.path.exists(target):
                 os.makedirs(target)
-                shutil.copy2(origin_path, target_path)
-            elif os.path.getmtime(origin_path) > os.path.getmtime(target_path):
+            if not os.path.exists(target_path) or (os.path.getmtime(origin_path) > os.path.getmtime(target_path)):
                 shutil.copy2(origin_path, target_path)
 
 def copy_all():
@@ -69,7 +68,7 @@ if __name__ == "__main__":
     # scheduler loop
     log("Starting...")
     copy_all()
-    schedule.every(int(config["HOURS_GAP"])).hours.at(config["TIME_START"]).do(copy_all)
+    schedule.every(int(config["HOURS_GAP"])).hours.at(config["TIME_START"], config["TIME_ZONE"]).do(copy_all)
     while True:
         schedule.run_pending()
         time.sleep(10)
