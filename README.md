@@ -27,5 +27,5 @@ TIME_START="22:25"
 ## How to launch
 Launch by starting docker container with docker-compose.  
 **!Beware! This will start a copy when you start the container, it can be a heavy processus and can reduce your server performance temporarly.**  
-The first copy is way more longer than next ones.  
+The first copy is way more heavy than next ones.  
 > docker-compose up -d
