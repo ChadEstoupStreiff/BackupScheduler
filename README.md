@@ -4,7 +4,7 @@ This app will search new or edited file and copy it to the target folder. Then i
 This job is executed every X time based on configuration file.
 
 ## Why use this instead of a NAS or a RAID disks ?
-Buy a NAS or configure RAID on your disk if you can, it's way more secure for your data.  
+Buy a NAS or configure RAID on your disks if you can, it's way more secure for your data.  
 The advantage of this backup scheduler is that it only copy whenever you want. That means you can configure to copy in the middle of the night. It consume disk and CPU power only when you want, it's very usefull for powerless servers like raspberries.  
 This application was created to create a disk copy of a disk who handle a nextcloud instance on a raspberry. Not enought power means to do some tricks.
 
