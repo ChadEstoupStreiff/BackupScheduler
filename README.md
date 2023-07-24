@@ -5,6 +5,9 @@ This job is executed every X time based on configuration file.
 
 
 ## Configuration
+Copy .env_ex file
+> cp .env_ex .env
+
 Edit .env file
 ```toml
 #====PATH====
