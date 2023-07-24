@@ -2,18 +2,29 @@ import logging
 import os
 import shutil
 import threading
-from threading import BoundedSemaphore
 import time
 from datetime import datetime
+from threading import BoundedSemaphore
 from typing import Any
 
 import schedule
 from dotenv import dotenv_values
-import time
 
 __ORIGIN_PATH = "/origin"
 __TARGET_PATH = "/target"
 __SEMAPHORE = None
+
+def seconds_to_str(seconds: float):
+    if seconds < 1:
+        return f"{int(seconds*1000)}ms"
+    else:
+        minutes = 0
+        while seconds >= 60:
+            minutes += 1
+            seconds -=60
+        if minutes == 0:
+            return f"{int(seconds*1000)/1000.}sec"
+        return f"{minutes}min {int(seconds*1000)/1000.}sec"
 
 def log(msg: str, logger: Any=logging.info) -> None:
     time: str = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -64,28 +75,29 @@ def copy_folders(origin: str, target: str) -> None:
     return count
 
 def copy_all():
+    log("Full copy started.")
     full_start = time.time()
-
-    log("Copying folders ...")
-    start = time.time()
-    copy_folders(__ORIGIN_PATH, __TARGET_PATH)
-    end = time.time()
-    log(f"Done. Took {int((end - start) * 1000)} ms")
-
-    log("Copying files (threaded) ...")
-    start = time.time()
-    copy_files(__ORIGIN_PATH, __TARGET_PATH)
-    end = time.time()
-    log(f"Done. Took {int((end - start) * 1000)} ms")
 
     log("Cleaning ...")
     start = time.time()
     clean_folder(__ORIGIN_PATH, __TARGET_PATH)
     end = time.time()
-    log(f"Done. Took {int((end - start) * 1000)} ms")
+    log(f"Done. Took {seconds_to_str(end - start)}")
+
+    log("Copying folders ...")
+    start = time.time()
+    copy_folders(__ORIGIN_PATH, __TARGET_PATH)
+    end = time.time()
+    log(f"Done. Took {seconds_to_str(end - start)}")
+
+    log("Copying files (threaded) ...")
+    start = time.time()
+    copy_files(__ORIGIN_PATH, __TARGET_PATH)
+    end = time.time()
+    log(f"Done. Took {seconds_to_str(end - start)}")
 
     full_end = time.time()
-    log(f"Done in {int((full_end - full_start)*1000)} ms!")
+    log(f"Full copy done in {seconds_to_str(full_end - full_start)} !")
 
 
 if __name__ == "__main__":
