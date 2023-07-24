@@ -10,10 +10,10 @@ This application was created to create a disk copy of a disk who handle a nextcl
 
 
 ## Configuration
-Copy .env_ex file
+Copy .env_ex file.
 > cp .env_ex .env
 
-Edit .env file
+Edit .env file.
 ```toml
 #====PATH====
 ORIGIN_PATH="/tmp/origin"
@@ -25,5 +25,7 @@ TIME_ZONE="Europe/Paris" # https://gist.github.com/heyalexej/8bf688fd67d7199be4a
 TIME_START="22:25"
 ```
 ## How to launch
-Launch by launching docker container with docker-compose
+Launch by launching docker container with docker-compose.  
+**!Beware! This will start a copy when you start the container, it can be a heavy processus and can reduce your server performance temporarly.**  
+The first copy is way more longer than next ones.  
 > docker-compose up -d
