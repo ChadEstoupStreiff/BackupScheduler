@@ -14,21 +14,24 @@ __ORIGIN_PATH = "/origin"
 __TARGET_PATH = "/target"
 __SEMAPHORE = None
 
+
 def seconds_to_str(seconds: float):
     if seconds < 1:
-        return f"{int(seconds*1000)}ms"
+        return f"{int(seconds * 1000)}ms"
     else:
         minutes = 0
         while seconds >= 60:
             minutes += 1
-            seconds -=60
+            seconds -= 60
         if minutes == 0:
-            return f"{int(seconds*1000)/1000.}sec"
-        return f"{minutes}min {int(seconds*1000)/1000.}sec"
+            return f"{int(seconds * 1000) / 1000.}sec"
+        return f"{minutes}min {int(seconds * 1000) / 1000.}sec"
 
-def log(msg: str, logger: Any=logging.info) -> None:
-    time: str = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    logger(f"[{time}]  {msg}")
+
+def log(msg: str, logger: Any = logging.info) -> None:
+    time_str: str = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    logger(f"[{time_str}]  {msg}")
+
 
 def clean_folder(origin: str, target: str) -> None:
     for file in os.listdir(target):
@@ -43,8 +46,15 @@ def clean_folder(origin: str, target: str) -> None:
         elif os.path.isdir(target_path):
             clean_folder(origin_path, target_path)
 
+
+def copy_file(origin: str, target: str):
+    with __SEMAPHORE:
+        shutil.copy2(origin, target, follow_symlinks=True)
+
+
 def copy_files(origin: str, target: str) -> None:
     folder_threads = []
+    file_threads = []
 
     for file in os.listdir(origin):
         origin_path = os.path.join(origin, file)
@@ -55,24 +65,26 @@ def copy_files(origin: str, target: str) -> None:
             folder_threads.append(thread)
             thread.start()
 
-        elif os.path.isfile(origin_path):
+        else:
             if not os.path.exists(target_path) or (os.path.getmtime(origin_path) > os.path.getmtime(target_path)):
-                with __SEMAPHORE:
-                    shutil.copy2(origin_path, target_path)
+                thread = threading.Thread(target=copy_file, args=(origin_path, target_path))
+                file_threads.append(thread)
+                thread.start()
 
+    for thread in file_threads:
+        thread.join()
     for thread in folder_threads:
         thread.join()
 
+
 def copy_folders(origin: str, target: str) -> None:
-    count = 0
     if not os.path.exists(target):
         os.makedirs(target)
-        count += 1
     for file in os.listdir(origin):
         origin_path = os.path.join(origin, file)
         if os.path.isdir(origin_path):
-            count += copy_folders(origin_path, os.path.join(target, file))
-    return count
+            copy_folders(origin_path, os.path.join(target, file))
+
 
 def copy_all():
     log("Full copy started.")

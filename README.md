@@ -24,7 +24,7 @@ TIME_ZONE="Europe/Paris" # https://gist.github.com/heyalexej/8bf688fd67d7199be4a
 TIME_START="22:25"
 
 #====OTHER====
-NBR_THREADS=4
+NBR_THREADS=1 # Speed up copy, not recommended on HDD disks
 ```
 ## How to launch
 Launch by starting docker container with docker-compose.  
